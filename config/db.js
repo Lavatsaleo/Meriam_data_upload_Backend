@@ -8,4 +8,10 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     dialect: 'mysql',
 });
 
+const User = require('../models/User')(sequelize, Sequelize.DataTypes);
+
+sequelize.sync()
+    .then(() => console.log('Database synced'))
+    .catch(err => console.log('Error: ' + err));
+
 module.exports = sequelize;

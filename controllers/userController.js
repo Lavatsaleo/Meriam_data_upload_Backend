@@ -1,7 +1,7 @@
-// controllers/userController.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const sequelize = require('../config/db');
+const User = sequelize.models.User;
 
 const register = async (req, res) => {
     const { username, email, password, role } = req.body;
