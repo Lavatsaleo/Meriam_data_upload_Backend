@@ -1,11 +1,25 @@
-// routes/fileRoutes.js
 const express = require('express');
-const { uploadFile, downloadFile } = require('../controllers/fileController');
-const authenticate = require('../middlewares/auth');
-const authorize = require('../middlewares/roles');
+const multer = require('multer');
+
 const router = express.Router();
 
-router.post('/upload', authenticate, authorize(['uploader', 'admin']), uploadFile);
-router.get('/download/:filename', authenticate, authorize(['downloader', 'admin']), downloadFile);
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
+
+router.post('/upload', upload.single('file'), (req, res) => {
+    try {
+        res.status(200).send({ message: 'File uploaded successfully', file: req.file });
+    } catch (error) {
+        res.status(500).send({ message: 'Failed to upload file', error });
+    }
+});
 
 module.exports = router;
